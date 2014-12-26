@@ -1,7 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-import unittest
-class NewVisitorTest(unittest.TestCase):
+from django.test import LiveServerTestCase
+
+class NewVisitorTest(LiveServerTestCase):
 
     def setUp(self):
         self.browser=webdriver.Firefox()
@@ -18,7 +19,7 @@ class NewVisitorTest(unittest.TestCase):
 
     def test_can_start_a_list_and_retrieve_it_later(self):
         # Guru opens the homepage of To Do app
-        self.browser.get("http://localhost:8000")
+        self.browser.get(self.live_server_url)
         
         # He checks the page title
         self.assertIn('To-Do', self.browser.title)  #5
@@ -34,10 +35,15 @@ class NewVisitorTest(unittest.TestCase):
         # Types "Find love" in the inputbox
         inputbox.send_keys("Find Love")
         inputbox.send_keys(Keys.ENTER)
+
+
+        inputbox=self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys("Use peacock feathers to make a fly")
+        inputbox.send_keys(Keys.ENTER)
+
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
         self.check_for_row_in_list_table('1: Find Love')
         self.check_for_row_in_list_table('2: Use peacock feathers to make a fly')
+        self.fail("Finish The Test ")
         
-if __name__ == '__main__':
-    unittest.main(warnings='ignore')
